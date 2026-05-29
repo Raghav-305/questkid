@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { BadgeCard } from "@/components/BadgeCard";
 import { PageTransition } from "@/components/PageTransition";
 import { resolveIcon } from "@/lib/icon-map";
-import { getAllBadgesServerFn } from "@/lib/supabase.functions";
+import { getPublicBadges } from "@/lib/public-supabase.queries";
 
 export const Route = createFileRoute("/achievements")({
   head: () => ({
@@ -20,14 +19,13 @@ export const Route = createFileRoute("/achievements")({
 });
 
 function AchievementsPage() {
-  const getAllBadges = useServerFn(getAllBadgesServerFn);
   const {
     data: badges = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: ["badges"],
-    queryFn: getAllBadges,
+    queryFn: getPublicBadges,
   });
 
   const unlocked = badges.length;

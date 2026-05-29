@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Client-side Supabase client
-const getEnv = (key: string) =>
-  typeof process !== "undefined" ? process.env[key] : import.meta.env[key];
+const getEnv = (key: string) => {
+  const processValue = typeof process !== "undefined" ? process.env?.[key] : undefined;
+  return processValue || import.meta.env[key];
+};
 
 const supabaseUrl = getEnv("VITE_SUPABASE_URL");
 const supabaseAnonKey = getEnv("VITE_SUPABASE_ANON_KEY");

@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { BadgePodium } from "@/components/BadgePodium";
 import { PageTransition } from "@/components/PageTransition";
-import { getLeaderboardServerFn } from "@/lib/supabase.functions";
+import { getPublicLeaderboard } from "@/lib/public-supabase.queries";
 import { cn } from "@/lib/utils";
 
 type LeaderboardPlayer = {
@@ -29,14 +28,13 @@ export const Route = createFileRoute("/leaderboard")({
 });
 
 function LeaderboardPage() {
-  const getLeaderboard = useServerFn(getLeaderboardServerFn);
   const {
     data: profiles = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: ["leaderboard"],
-    queryFn: getLeaderboard,
+    queryFn: () => getPublicLeaderboard(10),
   });
 
   const players: LeaderboardPlayer[] = profiles.map((profile, index) => ({

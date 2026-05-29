@@ -15,18 +15,21 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Server-side client with service role key (for protected operations)
+// Server-side client. Uses service role when available, otherwise falls back to
+// the anon key so public reads still work in production.
 export const getSupabaseServerClient = () => {
   const url = getEnv("VITE_SUPABASE_URL");
   const serviceRoleKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = getEnv("VITE_SUPABASE_ANON_KEY");
+  const key = serviceRoleKey || anonKey;
 
-  if (!url || !serviceRoleKey) {
+  if (!url || !key) {
     throw new Error(
-      "Missing Supabase server configuration. Please set VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in your .env or .env.local",
+      "Missing Supabase server configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env, .env.local, or Vercel environment variables.",
     );
   }
 
-  return createClient(url, serviceRoleKey, {
+  return createClient(url, key, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
